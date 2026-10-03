@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Banesa Ime",
+    "slug": "banesa-ime",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "banesaime",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.banesaime.app"
+    },
+    "android": {
+      "package": "com.banesaime.app"
+    }
+  }
+}
