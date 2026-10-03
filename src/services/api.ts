@@ -164,7 +164,7 @@ function normalizeProperty(raw: any): Property {
     title,
     location,
     priceLabel: price > 0
-      ? new Intl.NumberFormat('de-CH', {
+      ? new Intl.NumberFormat('en-US', {
           style: 'currency',
           currency,
           maximumFractionDigits: 0,
