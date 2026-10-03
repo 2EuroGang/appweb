@@ -40,8 +40,7 @@ export function PropertyCard({ property, onPress }: Props) {
           <Image source={FOR_SALE_BADGE} style={styles.saleBadge} resizeMode="contain" />
         ) : (
           <View style={styles.rentTag}>
-            <Text style={styles.rentText}>ME{'
-'}QIRA</Text>
+            <Text style={styles.rentText}>{'ME\nQIRA'}</Text>
           </View>
         )}
 
