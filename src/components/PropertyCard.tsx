@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '../theme';
 import type { Property } from '../types';
@@ -8,6 +8,10 @@ type Props = {
   property: Property;
   onPress?: () => void;
 };
+
+const GOLD_BADGE = require('../../assets/badges/gold.webp');
+const PREMIUM_BADGE = require('../../assets/badges/premium.webp');
+const FOR_SALE_BADGE = require('../../assets/badges/for-sale.webp');
 
 export function PropertyCard({ property, onPress }: Props) {
   const [favorite, setFavorite] = useState(Boolean(property.isFavorite));
@@ -21,20 +25,25 @@ export function PropertyCard({ property, onPress }: Props) {
       >
         <View style={styles.imageShade} />
 
-        {property.badge === 'premium' ? (
-          <View style={styles.premiumRibbon}>
-            <Text style={styles.ribbonText}>PREMIUM</Text>
-          </View>
-        ) : property.badge ? (
+        {property.badge === 'gold' ? (
+          <Image source={GOLD_BADGE} style={styles.goldBadge} resizeMode="contain" />
+        ) : property.badge === 'premium' ? (
+          <Image source={PREMIUM_BADGE} style={styles.premiumBadgeImage} resizeMode="contain" />
+        ) : property.badge === 'boost' ? (
           <View style={styles.roundBadge}>
             <Text style={styles.roundBadgeB}>B</Text>
-            <Text style={styles.roundBadgeText}>{property.badge === 'gold' ? 'GOLD' : 'BOOST'}</Text>
+            <Text style={styles.roundBadgeText}>BOOST</Text>
           </View>
         ) : null}
 
-        <View style={styles.hangingTag}>
-          <Text style={styles.hangingText}>{property.deal === 'rent' ? 'ME\nQIRA' : 'NË\nSHITJE'}</Text>
-        </View>
+        {property.deal === 'sale' ? (
+          <Image source={FOR_SALE_BADGE} style={styles.saleBadge} resizeMode="contain" />
+        ) : (
+          <View style={styles.rentTag}>
+            <Text style={styles.rentText}>ME{'
+'}QIRA</Text>
+          </View>
+        )}
 
         <Pressable
           style={styles.favorite}
@@ -57,7 +66,7 @@ export function PropertyCard({ property, onPress }: Props) {
       </ImageBackground>
 
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={1}>{property.title}</Text>
+        <Text style={styles.title} numberOfLines={2}>{property.title}</Text>
 
         <View style={styles.locationRow}>
           <View style={styles.locationDot} />
@@ -100,7 +109,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   image: {
-    height: 230,
+    height: 215,
     backgroundColor: '#D7D5D1',
   },
   imageInner: {
@@ -108,27 +117,21 @@ const styles = StyleSheet.create({
   },
   imageShade: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.03)',
+    backgroundColor: 'rgba(0,0,0,0.025)',
   },
-  premiumRibbon: {
+  goldBadge: {
     position: 'absolute',
-    left: -28,
-    top: 18,
-    width: 112,
-    height: 26,
-    backgroundColor: '#0C52C9',
-    transform: [{ rotate: '-45deg' }],
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.22,
-    shadowRadius: 5,
+    left: 10,
+    top: 10,
+    width: 62,
+    height: 62,
   },
-  ribbonText: {
-    color: 'white',
-    fontSize: 11,
-    fontWeight: '900',
-    letterSpacing: 0.5,
+  premiumBadgeImage: {
+    position: 'absolute',
+    left: -4,
+    top: -2,
+    width: 94,
+    height: 94,
   },
   roundBadge: {
     position: 'absolute',
@@ -154,37 +157,44 @@ const styles = StyleSheet.create({
     fontSize: 6.5,
     fontWeight: '900',
   },
-  hangingTag: {
+  saleBadge: {
     position: 'absolute',
-    top: -2,
-    right: 72,
-    width: 74,
-    minHeight: 48,
-    borderRadius: 5,
+    top: -18,
+    right: 62,
+    width: 110,
+    height: 92,
+  },
+  rentTag: {
+    position: 'absolute',
+    top: 8,
+    right: 74,
+    width: 78,
+    minHeight: 52,
+    borderRadius: 6,
     borderWidth: 2,
     borderColor: colors.gold,
     backgroundColor: colors.forestDeep,
     alignItems: 'center',
     justifyContent: 'center',
-    transform: [{ rotate: '4deg' }],
+    transform: [{ rotate: '3deg' }],
     shadowColor: '#000',
-    shadowOpacity: 0.22,
+    shadowOpacity: 0.18,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 3 },
     elevation: 3,
   },
-  hangingText: {
+  rentText: {
     color: '#FFF4D4',
     fontFamily: 'Georgia',
-    fontSize: 11,
-    lineHeight: 11,
+    fontSize: 12,
+    lineHeight: 12,
     fontWeight: '900',
     textAlign: 'center',
   },
   favorite: {
     position: 'absolute',
-    top: 16,
-    right: 16,
+    top: 14,
+    right: 14,
     width: 48,
     height: 48,
     borderRadius: 24,
@@ -199,7 +209,7 @@ const styles = StyleSheet.create({
   pricePill: {
     position: 'absolute',
     left: 18,
-    bottom: 18,
+    bottom: 16,
     borderRadius: 22,
     paddingHorizontal: 18,
     paddingVertical: 9,
@@ -214,14 +224,14 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 22,
-    paddingTop: 20,
+    paddingTop: 18,
     paddingBottom: 18,
   },
   title: {
     color: colors.ink,
     fontFamily: 'Georgia',
-    fontSize: 21,
-    lineHeight: 27,
+    fontSize: 20,
+    lineHeight: 26,
     fontWeight: '700',
   },
   locationRow: {
@@ -245,8 +255,8 @@ const styles = StyleSheet.create({
   divider: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#EDEAE4',
-    marginTop: 16,
-    marginBottom: 14,
+    marginTop: 15,
+    marginBottom: 13,
   },
   metaRow: {
     flexDirection: 'row',
