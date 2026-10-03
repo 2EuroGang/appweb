@@ -11,6 +11,8 @@ type Props = {
 
 const GOLD_BADGE = require('../../assets/badges/gold.webp');
 const PREMIUM_BADGE = require('../../assets/badges/premium.webp');
+const FOR_SALE_BADGE = require('../../assets/badges/for-sale.png');
+const FOR_RENT_BADGE = require('../../assets/badges/for-rent.png');
 
 export function PropertyCard({ property, onPress }: Props) {
   const [favorite, setFavorite] = useState(Boolean(property.isFavorite));
@@ -35,14 +37,11 @@ export function PropertyCard({ property, onPress }: Props) {
           </View>
         ) : null}
 
-        <View style={styles.dealTag}>
-          <Text style={styles.dealTagText}>
-            {property.deal === 'sale' ? 'NË' : 'ME'}
-          </Text>
-          <Text style={styles.dealTagText}>
-            {property.deal === 'sale' ? 'SHITJE' : 'QIRA'}
-          </Text>
-        </View>
+        <Image
+          source={property.deal === 'sale' ? FOR_SALE_BADGE : FOR_RENT_BADGE}
+          style={styles.dealBadgeImage}
+          resizeMode="contain"
+        />
 
         <Pressable
           style={styles.favorite}
@@ -156,32 +155,12 @@ const styles = StyleSheet.create({
     fontSize: 6.5,
     fontWeight: '900',
   },
-  dealTag: {
+  dealBadgeImage: {
     position: 'absolute',
-    top: 8,
-    right: 72,
-    width: 84,
-    minHeight: 54,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: colors.gold,
-    backgroundColor: colors.forestDeep,
-    alignItems: 'center',
-    justifyContent: 'center',
-    transform: [{ rotate: '3deg' }],
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 4,
-  },
-  dealTagText: {
-    color: '#FFF4D4',
-    fontFamily: 'Georgia',
-    fontSize: 12,
-    lineHeight: 13,
-    fontWeight: '900',
-    textAlign: 'center',
+    top: -2,
+    right: 62,
+    width: 116,
+    height: 82,
   },
   favorite: {
     position: 'absolute',
