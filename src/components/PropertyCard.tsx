@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors, radius, spacing } from '../theme';
 import type { Property } from '../types';
@@ -14,27 +15,63 @@ const badgeLabel = {
 } as const;
 
 export function PropertyCard({ property, onPress }: Props) {
+  const [favorite, setFavorite] = useState(Boolean(property.isFavorite));
+
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <View style={styles.imagePlaceholder}>
+        <View style={styles.imageShade} />
+
         {property.badge ? (
-          <View style={styles.badge}>
+          <View style={[styles.badge, property.badge === 'premium' && styles.premiumBadge]}>
             <Text style={styles.badgeText}>{badgeLabel[property.badge]}</Text>
           </View>
         ) : null}
-        <Text style={styles.imageText}>Foto e pronës</Text>
+
+        <View style={styles.dealTag}>
+          <Text style={styles.dealText}>{property.deal === 'rent' ? 'ME QIRA' : 'NË SHITJE'}</Text>
+        </View>
+
+        <Pressable
+          style={styles.favorite}
+          hitSlop={10}
+          onPress={(event) => {
+            event.stopPropagation();
+            setFavorite((value) => !value);
+          }}
+        >
+          <Text style={[styles.heart, favorite && styles.heartActive]}>{favorite ? '♥' : '♡'}</Text>
+        </Pressable>
+
+        <View style={styles.photoCount}>
+          <Text style={styles.photoCountText}>▧  8</Text>
+        </View>
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.price}>{property.priceLabel}</Text>
+        <View style={styles.priceRow}>
+          <Text style={styles.price}>{property.priceLabel}</Text>
+          <Text style={styles.typePill}>{property.typeLabel}</Text>
+        </View>
+
         <Text style={styles.title} numberOfLines={1}>{property.title}</Text>
-        <Text style={styles.location}>{property.location}</Text>
+        <Text style={styles.location}>⌖ {property.location}</Text>
+
+        <View style={styles.divider} />
+
         <View style={styles.metaRow}>
-          <Text style={styles.meta}>{property.areaLabel}</Text>
-          <Text style={styles.dot}>•</Text>
-          <Text style={styles.meta}>{property.roomsLabel}</Text>
-          <Text style={styles.dot}>•</Text>
-          <Text style={styles.meta}>{property.typeLabel}</Text>
+          <View style={styles.metaItem}>
+            <Text style={styles.metaIcon}>▣</Text>
+            <Text style={styles.meta}>{property.areaLabel}</Text>
+          </View>
+          <View style={styles.metaItem}>
+            <Text style={styles.metaIcon}>▤</Text>
+            <Text style={styles.meta}>{property.roomsLabel}</Text>
+          </View>
+          <View style={styles.metaItem}>
+            <Text style={styles.metaIcon}>⌂</Text>
+            <Text style={styles.meta}>{property.typeLabel}</Text>
+          </View>
         </View>
       </View>
     </Pressable>
@@ -44,69 +81,148 @@ export function PropertyCard({ property, onPress }: Props) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.white,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.border,
   },
   imagePlaceholder: {
-    height: 190,
-    backgroundColor: '#D9DDD9',
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: 214,
+    backgroundColor: '#AEBBB4',
+    justifyContent: 'flex-end',
   },
-  imageText: {
-    color: colors.muted,
-    fontWeight: '600',
+  imageShade: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(3,43,32,0.14)',
   },
   badge: {
     position: 'absolute',
     top: spacing.sm,
     left: spacing.sm,
-    backgroundColor: colors.forest,
+    backgroundColor: colors.forestDeep,
     borderWidth: 1,
     borderColor: colors.gold,
     borderRadius: radius.pill,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingVertical: 7,
+  },
+  premiumBadge: {
+    backgroundColor: '#174A92',
+    borderColor: '#BFD8FF',
   },
   badgeText: {
     color: colors.goldSoft,
     fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 0.9,
+  },
+  dealTag: {
+    position: 'absolute',
+    left: spacing.sm,
+    bottom: spacing.sm,
+    backgroundColor: colors.forest,
+    borderRadius: radius.pill,
+    paddingHorizontal: 11,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(217,179,91,0.65)',
+  },
+  dealText: {
+    color: colors.white,
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 0.6,
+  },
+  favorite: {
+    position: 'absolute',
+    top: spacing.sm,
+    right: spacing.sm,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: 'rgba(255,255,255,0.94)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heart: {
+    color: colors.forest,
+    fontSize: 27,
+    lineHeight: 30,
+  },
+  heartActive: {
+    color: colors.danger,
+  },
+  photoCount: {
+    position: 'absolute',
+    right: spacing.sm,
+    bottom: spacing.sm,
+    backgroundColor: 'rgba(3,43,32,0.78)',
+    borderRadius: radius.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  photoCountText: {
+    color: colors.white,
+    fontSize: 11,
     fontWeight: '800',
-    letterSpacing: 0.8,
   },
   content: {
     padding: spacing.md,
-    gap: 6,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   price: {
+    flex: 1,
     color: colors.forest,
-    fontSize: 20,
+    fontSize: 21,
+    fontWeight: '900',
+  },
+  typePill: {
+    color: colors.forest,
+    backgroundColor: '#EEF3F0',
+    fontSize: 10,
     fontWeight: '800',
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: radius.pill,
   },
   title: {
     color: colors.ink,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '800',
+    marginTop: 7,
   },
   location: {
     color: colors.muted,
-    fontSize: 14,
+    fontSize: 13,
+    marginTop: 5,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.border,
+    marginVertical: 13,
   },
   metaRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  metaItem: {
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: 7,
-    marginTop: 4,
+    gap: 5,
+  },
+  metaIcon: {
+    color: colors.gold,
+    fontSize: 13,
+    fontWeight: '900',
   },
   meta: {
     color: colors.ink,
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  dot: {
-    color: colors.gold,
+    fontSize: 12,
+    fontWeight: '700',
   },
 });
