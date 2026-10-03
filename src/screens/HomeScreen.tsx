@@ -46,12 +46,11 @@ export function HomeScreen({ onSearch }: Props) {
               <View style={styles.activeDot} />
               <Text style={styles.activeText}>SHFLETONI PRONAT AKTIVE</Text>
             </View>
-            <Text style={styles.heroTitle}>
-              Gjej vendin{'
-'}ku jeta merr{'
-'}
-              <Text style={styles.heroItalic}>formë</Text>
-            </Text>
+            <View>
+              <Text style={styles.heroTitle}>Gjej vendin</Text>
+              <Text style={styles.heroTitle}>ku jeta merr</Text>
+              <Text style={[styles.heroTitle, styles.heroItalic]}>formë</Text>
+            </View>
             <Text style={styles.heroSubtitle}>Shfletoni prona për shitje dhe qira.</Text>
           </View>
         </ImageBackground>
