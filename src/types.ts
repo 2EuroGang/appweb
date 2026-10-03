@@ -1,4 +1,5 @@
 export type PropertyBadge = 'gold' | 'premium' | 'boost';
+export type PropertyDeal = 'sale' | 'rent';
 
 export type Property = {
   id: string;
@@ -9,5 +10,7 @@ export type Property = {
   roomsLabel: string;
   typeLabel: string;
   badge?: PropertyBadge;
+  deal: PropertyDeal;
   isFavorite?: boolean;
+  imageUrl?: string;
 };
