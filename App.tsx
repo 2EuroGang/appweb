@@ -1,21 +1,38 @@
 import { useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { ResultsScreen } from './src/screens/ResultsScreen';
 import { colors } from './src/theme';
 
 type Tab = 'home' | 'search' | 'saved' | 'notifications' | 'profile';
 
-const tabs: Array<{ key: Tab; icon: string; labelHome: string; labelOther: string }> = [
-  { key: 'home', icon: '⌂', labelHome: 'Ballina', labelOther: 'Kreu' },
-  { key: 'search', icon: '⌕', labelHome: 'Kërko', labelOther: 'Kërko' },
-  { key: 'saved', icon: '♡', labelHome: 'Të Ruajturat', labelOther: 'Të Ruajturat' },
-  { key: 'notifications', icon: '♧', labelHome: 'Njoftimet', labelOther: 'Njoftimet' },
-  { key: 'profile', icon: '♙', labelHome: 'Profili', labelOther: 'Profili' },
+const tabs: Array<{
+  key: Tab;
+  icon: keyof typeof Ionicons.glyphMap;
+  iconActive: keyof typeof Ionicons.glyphMap;
+  labelHome: string;
+  labelOther: string;
+}> = [
+  { key: 'home', icon: 'home-outline', iconActive: 'home', labelHome: 'Ballina', labelOther: 'Kreu' },
+  { key: 'search', icon: 'search-outline', iconActive: 'search', labelHome: 'Kërko', labelOther: 'Kërko' },
+  { key: 'saved', icon: 'heart-outline', iconActive: 'heart', labelHome: 'Të Ruajturat', labelOther: 'Të Ruajturat' },
+  { key: 'notifications', icon: 'notifications-outline', iconActive: 'notifications', labelHome: 'Njoftimet', labelOther: 'Njoftimet' },
+  { key: 'profile', icon: 'person-outline', iconActive: 'person', labelHome: 'Profili', labelOther: 'Profili' },
 ];
 
 export default function App() {
+  return (
+    <SafeAreaProvider>
+      <AppShell />
+    </SafeAreaProvider>
+  );
+}
+
+function AppShell() {
   const [tab, setTab] = useState<Tab>('home');
+  const insets = useSafeAreaInsets();
 
   const content =
     tab === 'home' ? <HomeScreen onSearch={() => setTab('search')} /> :
@@ -28,52 +45,113 @@ export default function App() {
     </View>;
 
   return (
-    <SafeAreaView style={styles.root}>
+    <View style={styles.root}>
       <View style={styles.content}>{content}</View>
 
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { paddingBottom: Math.max(insets.bottom, 8), height: 68 + Math.max(insets.bottom, 8) }]}>
         {tabs.map((item) => {
           const active = tab === item.key;
           const label = tab === 'home' ? item.labelHome : item.labelOther;
+
           return (
-            <Pressable key={item.key} style={styles.tabButton} onPress={() => setTab(item.key)}>
+            <Pressable
+              key={item.key}
+              style={styles.tabButton}
+              onPress={() => setTab(item.key)}
+              android_ripple={{ color: 'rgba(15,56,44,0.06)', borderless: true }}
+            >
               <View style={styles.iconWrap}>
-                <Text style={[styles.tabIcon, active && styles.tabIconActive]}>{item.icon}</Text>
+                <Ionicons
+                  name={active ? item.iconActive : item.icon}
+                  size={26}
+                  color={active ? colors.forestDeep : '#A8A5A0'}
+                />
                 {item.key === 'notifications' ? <View style={styles.notifyDot} /> : null}
-                {active && item.key === 'search' ? <View style={styles.searchGoldDot} /> : null}
               </View>
-              <Text style={[styles.tabText, active && styles.tabTextActive]}>{label}</Text>
+              <Text style={[styles.tabText, active && styles.tabTextActive]} numberOfLines={1}>
+                {label}
+              </Text>
             </Pressable>
           );
         })}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.background },
-  content: { flex: 1 },
+  root: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  content: {
+    flex: 1,
+  },
   tabBar: {
-    height: 76,
-    backgroundColor: 'rgba(255,255,255,0.98)',
-    borderTopWidth: 1,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.border,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingHorizontal: 3,
-    paddingBottom: 3,
+    alignItems: 'flex-start',
+    paddingTop: 8,
+    paddingHorizontal: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: -2 },
+    elevation: 8,
   },
-  tabButton: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 3 },
-  iconWrap: { width: 34, height: 30, alignItems: 'center', justifyContent: 'center' },
-  tabIcon: { color: '#A9A39D', fontSize: 30, lineHeight: 31, fontWeight: '400' },
-  tabIconActive: { color: colors.forestDeep },
-  tabText: { color: '#A9A39D', fontSize: 11, fontWeight: '600' },
-  tabTextActive: { color: colors.forestDeep, fontWeight: '800' },
-  notifyDot: { position: 'absolute', right: 2, top: 1, width: 6, height: 6, borderRadius: 3, backgroundColor: colors.gold },
-  searchGoldDot: { position: 'absolute', bottom: -2, width: 5, height: 5, borderRadius: 3, backgroundColor: colors.gold },
-  placeholder: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  placeholderTitle: { color: colors.forest, fontFamily: 'Georgia', fontSize: 28, fontWeight: '700', marginBottom: 8 },
-  placeholderText: { color: colors.muted, fontWeight: '600', textAlign: 'center' },
+  tabButton: {
+    flex: 1,
+    minWidth: 0,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: 3,
+  },
+  iconWrap: {
+    width: 34,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabText: {
+    color: '#A8A5A0',
+    fontSize: 10.5,
+    lineHeight: 13,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  tabTextActive: {
+    color: colors.forestDeep,
+    fontWeight: '800',
+  },
+  notifyDot: {
+    position: 'absolute',
+    right: 1,
+    top: 0,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: colors.gold,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+  },
+  placeholder: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  placeholderTitle: {
+    color: colors.forest,
+    fontFamily: 'Georgia',
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  placeholderText: {
+    color: colors.muted,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
 });
