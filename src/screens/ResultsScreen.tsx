@@ -1,9 +1,35 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { PropertyCard } from '../components/PropertyCard';
 import { featuredProperties } from '../mock-data';
+import { searchProperties } from '../services/api';
 import { colors, radius, spacing } from '../theme';
+import type { Property } from '../types';
 
 export function ResultsScreen() {
+  const [properties, setProperties] = useState<Property[]>(featuredProperties);
+  const [loading, setLoading] = useState(false);
+  const [apiMode, setApiMode] = useState(false);
+
+  async function loadFromApi() {
+    setLoading(true);
+    try {
+      const rows = await searchProperties({});
+      if (rows.length > 0) {
+        setProperties(rows);
+        setApiMode(true);
+      }
+    } catch {
+      setApiMode(false);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void loadFromApi();
+  }, []);
+
   return (
     <View style={styles.root}>
       <View style={styles.header}>
@@ -25,10 +51,14 @@ export function ResultsScreen() {
 
       <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
         <View style={styles.countRow}>
-          <Text style={styles.count}>{featuredProperties.length} prona</Text>
-          <Text style={styles.viewLabel}>Pamja: Listë</Text>
+          <View>
+            <Text style={styles.count}>{properties.length} prona</Text>
+            <Text style={styles.source}>{apiMode ? 'Të dhëna nga Banesa Ime' : 'Demo data'}</Text>
+          </View>
+          {loading ? <ActivityIndicator color={colors.forest} /> : <Text style={styles.viewLabel}>Pamja: Listë</Text>}
         </View>
-        {featuredProperties.map((property) => <PropertyCard key={property.id} property={property} />)}
+
+        {properties.map((property) => <PropertyCard key={property.id} property={property} />)}
       </ScrollView>
     </View>
   );
@@ -49,5 +79,6 @@ const styles = StyleSheet.create({
   list: { padding: spacing.lg, paddingBottom: 120, gap: 16 },
   countRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   count: { color: colors.ink, fontWeight: '900' },
+  source: { color: colors.muted, fontSize: 10, marginTop: 3 },
   viewLabel: { color: colors.muted, fontSize: 12, fontWeight: '700' },
 });
