@@ -11,7 +11,8 @@ type Props = {
 
 const GOLD_BADGE = require('../../assets/badges/gold.webp');
 const PREMIUM_BADGE = require('../../assets/badges/premium.webp');
-const FOR_SALE_BADGE = require('../../assets/badges/for-sale.webp');
+const FOR_SALE_BADGE = require('../../assets/badges/for-sale.png');
+const FOR_RENT_BADGE = require('../../assets/badges/for-rent.png');
 
 export function PropertyCard({ property, onPress }: Props) {
   const [favorite, setFavorite] = useState(Boolean(property.isFavorite));
@@ -36,13 +37,11 @@ export function PropertyCard({ property, onPress }: Props) {
           </View>
         ) : null}
 
-        {property.deal === 'sale' ? (
-          <Image source={FOR_SALE_BADGE} style={styles.saleBadge} resizeMode="contain" />
-        ) : (
-          <View style={styles.rentTag}>
-            <Text style={styles.rentText}>{'ME\nQIRA'}</Text>
-          </View>
-        )}
+        <Image
+          source={property.deal === 'sale' ? FOR_SALE_BADGE : FOR_RENT_BADGE}
+          style={styles.dealBadge}
+          resizeMode="contain"
+        />
 
         <Pressable
           style={styles.favorite}
@@ -156,39 +155,12 @@ const styles = StyleSheet.create({
     fontSize: 6.5,
     fontWeight: '900',
   },
-  saleBadge: {
+  dealBadge: {
     position: 'absolute',
-    top: -18,
-    right: 62,
-    width: 110,
-    height: 92,
-  },
-  rentTag: {
-    position: 'absolute',
-    top: 8,
-    right: 74,
-    width: 78,
-    minHeight: 52,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: colors.gold,
-    backgroundColor: colors.forestDeep,
-    alignItems: 'center',
-    justifyContent: 'center',
-    transform: [{ rotate: '3deg' }],
-    shadowColor: '#000',
-    shadowOpacity: 0.18,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
-  },
-  rentText: {
-    color: '#FFF4D4',
-    fontFamily: 'Georgia',
-    fontSize: 12,
-    lineHeight: 12,
-    fontWeight: '900',
-    textAlign: 'center',
+    top: 2,
+    right: 66,
+    width: 104,
+    height: 70,
   },
   favorite: {
     position: 'absolute',
