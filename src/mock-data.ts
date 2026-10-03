@@ -12,6 +12,7 @@ export const featuredProperties: Property[] = [
     badge: 'gold',
     deal: 'sale',
     isFavorite: false,
+    imageUrl: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'demo-2',
@@ -24,6 +25,7 @@ export const featuredProperties: Property[] = [
     badge: 'premium',
     deal: 'rent',
     isFavorite: true,
+    imageUrl: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: 'demo-3',
@@ -36,5 +38,6 @@ export const featuredProperties: Property[] = [
     badge: 'boost',
     deal: 'sale',
     isFavorite: false,
+    imageUrl: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80',
   },
 ];
