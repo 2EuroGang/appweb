@@ -4,7 +4,15 @@ import { HomeScreen } from './src/screens/HomeScreen';
 import { ResultsScreen } from './src/screens/ResultsScreen';
 import { colors } from './src/theme';
 
-type Tab = 'home' | 'search' | 'publish' | 'saved' | 'profile';
+type Tab = 'home' | 'search' | 'saved' | 'notifications' | 'profile';
+
+const tabs: Array<{ key: Tab; icon: string; labelHome: string; labelOther: string }> = [
+  { key: 'home', icon: '⌂', labelHome: 'Ballina', labelOther: 'Kreu' },
+  { key: 'search', icon: '⌕', labelHome: 'Kërko', labelOther: 'Kërko' },
+  { key: 'saved', icon: '♡', labelHome: 'Të Ruajturat', labelOther: 'Të Ruajturat' },
+  { key: 'notifications', icon: '♧', labelHome: 'Njoftimet', labelOther: 'Njoftimet' },
+  { key: 'profile', icon: '♙', labelHome: 'Profili', labelOther: 'Profili' },
+];
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('home');
@@ -14,75 +22,58 @@ export default function App() {
     tab === 'search' ? <ResultsScreen /> :
     <View style={styles.placeholder}>
       <Text style={styles.placeholderTitle}>
-        {tab === 'publish' ? 'Publiko pronë' : tab === 'saved' ? 'Pronat e ruajtura' : 'Profili'}
+        {tab === 'saved' ? 'Të Ruajturat' : tab === 'notifications' ? 'Njoftimet' : 'Profili'}
       </Text>
-      <Text style={styles.placeholderText}>Ky ekran do të ndërtohet në fazën tjetër.</Text>
+      <Text style={styles.placeholderText}>Ky ekran do të ndërtohet pas Home dhe Results.</Text>
     </View>;
 
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.content}>{content}</View>
+
       <View style={styles.tabBar}>
-        <TabButton label="Ballina" active={tab === 'home'} onPress={() => setTab('home')} />
-        <TabButton label="Kërko" active={tab === 'search'} onPress={() => setTab('search')} />
-        <Pressable style={styles.publishButton} onPress={() => setTab('publish')}>
-          <Text style={styles.publishPlus}>＋</Text>
-          <Text style={styles.publishText}>Publiko</Text>
-        </Pressable>
-        <TabButton label="Ruajtur" active={tab === 'saved'} onPress={() => setTab('saved')} />
-        <TabButton label="Profili" active={tab === 'profile'} onPress={() => setTab('profile')} />
+        {tabs.map((item) => {
+          const active = tab === item.key;
+          const label = tab === 'home' ? item.labelHome : item.labelOther;
+          return (
+            <Pressable key={item.key} style={styles.tabButton} onPress={() => setTab(item.key)}>
+              <View style={styles.iconWrap}>
+                <Text style={[styles.tabIcon, active && styles.tabIconActive]}>{item.icon}</Text>
+                {item.key === 'notifications' ? <View style={styles.notifyDot} /> : null}
+                {active && item.key === 'search' ? <View style={styles.searchGoldDot} /> : null}
+              </View>
+              <Text style={[styles.tabText, active && styles.tabTextActive]}>{label}</Text>
+            </Pressable>
+          );
+        })}
       </View>
     </SafeAreaView>
   );
 }
 
-function TabButton({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
-  return (
-    <Pressable style={styles.tabButton} onPress={onPress}>
-      <View style={[styles.tabDot, active && styles.tabDotActive]} />
-      <Text style={[styles.tabText, active && styles.tabTextActive]}>{label}</Text>
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.cream },
+  root: { flex: 1, backgroundColor: colors.background },
   content: { flex: 1 },
   tabBar: {
-    position: 'absolute',
-    left: 12,
-    right: 12,
-    bottom: 10,
-    minHeight: 76,
-    borderRadius: 24,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.border,
+    height: 76,
+    backgroundColor: 'rgba(255,255,255,0.98)',
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    paddingHorizontal: 6,
-    paddingVertical: 8,
+    paddingHorizontal: 3,
+    paddingBottom: 3,
   },
-  tabButton: { minWidth: 54, alignItems: 'center', gap: 6 },
-  tabDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#C8CFCA' },
-  tabDotActive: { backgroundColor: colors.gold },
-  tabText: { color: colors.muted, fontSize: 11, fontWeight: '700' },
-  tabTextActive: { color: colors.forest, fontWeight: '900' },
-  publishButton: {
-    width: 66,
-    height: 66,
-    marginTop: -26,
-    borderRadius: 33,
-    backgroundColor: colors.forest,
-    borderWidth: 3,
-    borderColor: colors.gold,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  publishPlus: { color: colors.goldSoft, fontSize: 24, fontWeight: '900', lineHeight: 25 },
-  publishText: { color: colors.white, fontSize: 10, fontWeight: '800' },
+  tabButton: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 3 },
+  iconWrap: { width: 34, height: 30, alignItems: 'center', justifyContent: 'center' },
+  tabIcon: { color: '#A9A39D', fontSize: 30, lineHeight: 31, fontWeight: '400' },
+  tabIconActive: { color: colors.forestDeep },
+  tabText: { color: '#A9A39D', fontSize: 11, fontWeight: '600' },
+  tabTextActive: { color: colors.forestDeep, fontWeight: '800' },
+  notifyDot: { position: 'absolute', right: 2, top: 1, width: 6, height: 6, borderRadius: 3, backgroundColor: colors.gold },
+  searchGoldDot: { position: 'absolute', bottom: -2, width: 5, height: 5, borderRadius: 3, backgroundColor: colors.gold },
   placeholder: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  placeholderTitle: { color: colors.forest, fontSize: 26, fontWeight: '900', marginBottom: 8 },
-  placeholderText: { color: colors.muted, fontWeight: '700', textAlign: 'center' },
+  placeholderTitle: { color: colors.forest, fontFamily: 'Georgia', fontSize: 28, fontWeight: '700', marginBottom: 8 },
+  placeholderText: { color: colors.muted, fontWeight: '600', textAlign: 'center' },
 });
